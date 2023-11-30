@@ -1,4 +1,3 @@
-[[
 local players = game:GetService("Players")
 
 local funtion highlightPlayer(player
@@ -11,8 +10,7 @@ end
 for _, player in ipairs(Player:GetPlayers()) do
     highlightPlayer(player)
 end
-]]
-
+[[
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
@@ -34,3 +32,4 @@ for _, descendant in pairs(Workspace:WaitForChild("Entities"):GetDescendants()) 
         highlightPlayer(descendant.Parent)
     end
 end
+]]
