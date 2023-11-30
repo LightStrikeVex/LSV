@@ -1,55 +1,27 @@
 local Jugador = game.Players.LocalPlayer
-local ServicioJugadores = game:GetService("Players")
-local ServicioEnemigos = game:GetService("Workspace").Enemies -- Asume que tus NPCs están en un contenedor llamado "Enemies"
+local ServicioUsuario = game:GetService("UserInputService")
 
-local DistanciaMaxima = 50 -- Puedes ajustar esto según tu preferencia
-
-function EsNPC(objeto)
-    return objeto:IsA("Model") and objeto:FindFirstChild("Humanoid") and not ServicioJugadores:GetPlayerFromCharacter(objeto)
+function EsHumanoide(objeto)
+    return objeto:IsA("Humanoid")
 end
 
-function ObtenerEnemigosCercanos()
-    local enemigosCercanos = {}
-    local posicionJugador = Jugador.Character.HumanoidRootPart.Position
+function ApuntarACoordenadas(x, y)
+    local mouseHit = workspace.CurrentCamera:ScreenPointToRay(x, y)
+    local objeto, posicion = workspace:FindPartOnRay(mouseHit, nil, false, true)
 
-    for _, objeto in pairs(ServicioEnemigos:GetChildren()) do
-        if EsNPC(objeto) then
-            local posicionObjeto = objeto:WaitForChild("HumanoidRootPart").Position
-            local distancia = (posicionJugador - posicionObjeto).Magnitude
+    if objeto and EsHumanoide(objeto.Parent) and objeto.Parent ~= Jugador.Character then
+        local direccion = (posicion - workspace.CurrentCamera.CFrame.Position).unit
+        local rotacion = CFrame.new(workspace.CurrentCamera.CFrame.Position, posicion)
 
-            if distancia <= DistanciaMaxima then
-                table.insert(enemigosCercanos, {Objeto = objeto, Distancia = distancia})
-            end
-        end
-    end
-
-    table.sort(enemigosCercanos, function(a, b) return a.Distancia < b.Distancia end)
-
-    return enemigosCercanos
-end
-
-function ApuntarACabeza(objeto)
-    local cabezaNPC = objeto:WaitForChild("Head")
-    local puntoDeMira = cabezaNPC.Position
-
-    -- Tu código para apuntar a puntoDeMira aquí
-    -- Puedes utilizar CFrame para rotar la cámara hacia el puntoDeMira
-
-    print("Apuntando a la cabeza del NPC más cercano")
-end
-
-function ActualizarPunteria()
-    local enemigosCercanos = ObtenerEnemigosCercanos()
-
-    if #enemigosCercanos > 0 then
-        ApuntarACabeza(enemigosCercanos[1].Objeto)
-    else
-        -- Tu código para manejar la falta de enemigos cercanos
-        print("No hay NPCs cercanos")
+        -- Aplica la rotación a la cámara
+        workspace.CurrentCamera.CFrame = rotacion
     end
 end
 
--- Llama a la función ActualizarPunteria cada segundo (puedes ajustar este tiempo)
-while wait(1) do
-    ActualizarPunteria()
-end
+-- Conecta la función ApuntarACoordenadas al evento de toque en la pantalla
+ServicioUsuario.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.UserInputType == Enum.UserInputType.Touch then
+        local touchPosition = input.Position
+        ApuntarACoordenadas(touchPosition.X, touchPosition.Y)
+    end
+end)
