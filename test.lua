@@ -1,35 +1,18 @@
-local players = game:GetService("Players")
-
-local funtion highlightPlayer(player
-    local highlight = Instance.new("Highlight")
-    highlight.Parent = player.Character
-    highlight.Fillcolor = Color3.fromRGB(255, 0, 0)
-    highlight.OutlineColor = Color3.fromRGB(0, 0, 255)
-end
-
-for _, player in ipairs(Player:GetPlayers()) do
-    highlightPlayer(player)
-end
-[[
 local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
 
 local function highlightPlayer(player)
-    local highlight = Instance.new("Highlight")
+    local highlight = Instance.new("PointLight") -- Cambié a PointLight para resaltar mejor
     highlight.Parent = player.Character
-    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-    highlight.OutlineColor = Color3.fromRGB(0, 0, 255)
+    highlight.Color = Color3.fromRGB(255, 0, 0)
+    highlight.Range = 10 -- Ajusté el rango del resaltado
 end
 
--- Función para verificar si un objeto es un jugador
-local function isPlayer(object)
-    return object:IsA("Player")
+-- Conectamos una función para resaltar a los jugadores existentes
+for _, player in ipairs(Players:GetPlayers()) do
+    highlightPlayer(player)
 end
 
--- Recorre todos los humanoides en el Workspace
-for _, descendant in pairs(Workspace:WaitForChild("Entities"):GetDescendants()) do
-    if descendant:IsA("Humanoid") and not isPlayer(descendant.Parent) then
-        highlightPlayer(descendant.Parent)
-    end
-end
-]]
+-- Conectamos la función para resaltar a los jugadores nuevos
+Players.PlayerAdded:Connect(function(player)
+    highlightPlayer(player)
+end)
