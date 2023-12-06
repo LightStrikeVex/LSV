@@ -40,7 +40,7 @@ game:GetService"RunService".RenderStepped:Connect(function()
  Character.Humanoid:ChangeState(11) -- continue to execute after death
  Character.Humanoid.JumpPower = 0
  Character.Humanoid.JumpHeight = 0
- Character.Humanoid.WalkSpeed = 0
+ Character.Humanoid.WalkSpeed = 16
  Character.Humanoid.HipHeight = 0
  Character.Humanoid.AutoRotate = false
  Character.Humanoid.PlatformStand = true 
